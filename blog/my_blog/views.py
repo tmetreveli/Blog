@@ -44,9 +44,7 @@ class CategoryList(generics.ListAPIView):
    
 @api_view(['POST'])
 def login_view(request):
-    print("Request data:", request.data)
     serializer = AuthTokenSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
-        print("Serializer validated data:", serializer.validated_data)
         return Response({'token': serializer.validated_data['token']})
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
