@@ -10,6 +10,7 @@ urlpatterns = [
     path('blogs/<int:pk>/', BlogDetail.as_view(), name='blog-detail'),
     path('categories/', CategoryList.as_view(), name='category-list'),
     path('login/', login_view, name='login'),
+    path('blogs/?categories=<str:category>', BlogListCreate.as_view(), name='blog-filter'),
 ]
 
 

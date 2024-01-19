@@ -11,7 +11,7 @@ class Blog(models.Model):
     author = models.CharField(max_length=100)
     email = models.EmailField(max_length=100)
     publication_date = models.DateField(auto_now_add=True)
-    # image = models.ImageField(upload_to='blog_images/')
+    image = models.ImageField(upload_to='blog_images/')
     categories = models.ManyToManyField(Category)
     description = models.TextField()
 

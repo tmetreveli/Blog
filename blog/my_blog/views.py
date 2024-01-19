@@ -55,14 +55,15 @@ class AuthTokenSerializer(serializers.Serializer):
    
 User = get_user_model()
 
-@api_view(['POST'])
-@permission_classes([])
-def login_view(request):
-    serializer = AuthTokenSerializer(data=request.data)
-    if serializer.is_valid():
-        email = serializer.validated_data['email']
-        user, _ = User.objects.get_or_create(email=email)
-        token, _ = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key}, status=status.HTTP_200_OK)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['POST'])
+def login_view(request):
+    email = request.data.get('email')
+    username = email  
+
+    user, created = User.objects.get_or_create(username=username, defaults={'email': email})
+    if created:
+        user.save()
+
+    token, created = Token.objects.get_or_create(user=user)
+    return Response({'token': token.key})
