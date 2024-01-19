@@ -4,7 +4,7 @@ class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
     text_color = models.CharField(max_length=100)
     background_color = models.CharField(max_length=100)
-    
+
     def __str__(self):
         return self.name
 
@@ -13,7 +13,7 @@ class Blog(models.Model):
     author = models.CharField(max_length=100)
     email = models.EmailField(max_length=100)
     publication_date = models.DateField(auto_now_add=True)
-    image = models.ImageField(upload_to='blog_images/')
+    image = models.URLField()
     categories = models.ManyToManyField(Category)
     description = models.TextField()
 
