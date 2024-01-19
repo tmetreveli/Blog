@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Blog, Category
-
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
@@ -17,10 +17,10 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 
+User = get_user_model()
 
 class AuthTokenSerializer(serializers.Serializer):
     email = serializers.EmailField()
-    token = serializers.CharField(read_only=True)
 
     def validate_email(self, value):
         if not value.endswith('@redberry.ge'):
@@ -28,7 +28,7 @@ class AuthTokenSerializer(serializers.Serializer):
         return value
 
     def validate(self, data):
-        email = data.get('email')
+        email = data['email']
 
         try:
             user = User.objects.get(email=email)
@@ -38,7 +38,8 @@ class AuthTokenSerializer(serializers.Serializer):
         if not user.is_active:
             raise serializers.ValidationError('User account is disabled.')
 
-        token, created = Token.objects.get_or_create(user=user)
+        token, _ = Token.objects.get_or_create(user=user)
         data['token'] = token.key
         return data
+
 

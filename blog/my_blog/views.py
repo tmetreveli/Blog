@@ -39,31 +39,14 @@ class CategoryList(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
-@api_view(['POST'])
-@permission_classes([])
-def custom_obtain_auth_token(request):
-    serializer = AuthTokenSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-    user = serializer.validated_data['user']
-    token, created = Token.objects.get_or_create(user=user)
-    return Response({'token': token.key})
 
-class AuthTokenSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-    token = serializers.CharField(read_only=True)
 
    
-User = get_user_model()
-
-
 @api_view(['POST'])
 def login_view(request):
-    email = request.data.get('email')
-    username = email  
-
-    user, created = User.objects.get_or_create(username=username, defaults={'email': email})
-    if created:
-        user.save()
-
-    token, created = Token.objects.get_or_create(user=user)
-    return Response({'token': token.key})
+    print("Request data:", request.data)
+    serializer = AuthTokenSerializer(data=request.data)
+    if serializer.is_valid(raise_exception=True):
+        print("Serializer validated data:", serializer.validated_data)
+        return Response({'token': serializer.validated_data['token']})
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
