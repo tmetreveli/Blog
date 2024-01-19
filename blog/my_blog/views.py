@@ -19,6 +19,14 @@ class BlogListCreate(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+    
+    def get_queryset(self):
+        queryset = Blog.objects.all()
+        categories = self.request.query_params.get('categories')
+        if categories:
+            category_list = categories.split(',')
+            queryset = queryset.filter(categories__name__in=category_list).distinct()
+        return queryset
 
 class BlogDetail(generics.RetrieveAPIView):
     queryset = Blog.objects.all()
