@@ -11,15 +11,25 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class BlogSerializer(serializers.ModelSerializer):
-    categories = CategorySerializer(many=True, read_only=True)
+    categories = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Category.objects.all()
+    )
 
     class Meta:
         model = Blog
         fields = "__all__"
 
+    def create(self, validated_data):
+        categories = validated_data.pop('categories', [])
+        blog = Blog.objects.create(**validated_data)
+        for category in categories:
+            blog.categories.add(category)
+        return blog
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
         return {'data': [data]}
+
 
 
 
